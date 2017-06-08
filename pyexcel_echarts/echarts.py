@@ -1,34 +1,43 @@
+import os
 import uuid
 
 from pyexcel.renderer import Renderer
+from jinja2 import Environment, FileSystemLoader
 
 from pyexcel_echarts.options import MANAGER
 
-
-SCRIPT = """
-<script type="text/javascript">
-var myChart = echarts.init(document.getElementById('%s'));
-var option = %s;
-myChart.setOption(option);
-</script>
-"""
+JS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/echarts/3.6.1/echarts.min.js'  # flake8: noqa
 
 
 class Chart(Renderer):
+    def __init__(self, file_type):
+        Renderer.__init__(self, file_type)
+        loader = FileSystemLoader(_get_resource_dir('templates'))
+        self._env = Environment(loader=loader,
+                                keep_trailing_newline=True,
+                                trim_blocks=True,
+                                lstrip_blocks=True)
 
     def render_sheet(self, sheet, chart_type='bar',
+                     js_url=JS_URL, width=600, height=400,
                      embed=False, **keywords):
         config = MANAGER.get_a_plugin(chart_type)
         config.configure(sheet, **keywords)
-        if not embed:
-            self._render_html_header()
-        div_id = uuid.uuid4().hex
-        self._stream.write(
-            '<div id="%s" style="width:600px;height:400px"></div>' % div_id)
-        self._stream.write(SCRIPT % (div_id, config.to_json()))
-        self._stream.write("</body></html>")
+        chart_data = {
+            "uid": uuid.uuid4().hex,
+            "option": config.to_json(),
+            "js_url": JS_URL,
+            "width": width,
+            "height": height
+        }
+        if embed:
+            template = self._env.get_template('embed.html')
+        else:
+            template = self._env.get_template('full.html')
+        self._stream.write(template.render(**chart_data))
 
-    def _render_html_header(self, js_url=None, **keywords):
-        self._stream.write('<html><head>')
-        self._stream.write('<script src="echarts.min.js"></script>')
-        self._stream.write('</head><body>')
+
+def _get_resource_dir(folder):
+    current_path = os.path.dirname(__file__)
+    resource_path = os.path.join(current_path, folder)
+    return resource_path

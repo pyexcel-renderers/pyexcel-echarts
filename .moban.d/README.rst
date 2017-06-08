@@ -4,5 +4,14 @@
 {%endblock%}
 
 {%block features %}
-**{{name}}** does xyz.
+**{{name}}** generate `echarts <http://echarts.baidu.com>`_.
+
+
+Evaluation
+===============
+
+Please visit demo directory and run ::
+
+   $ make
+
 {%endblock%}

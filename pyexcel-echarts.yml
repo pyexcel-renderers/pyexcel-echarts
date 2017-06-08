@@ -3,5 +3,6 @@ name: "pyexcel-echarts"
 nick_name: "echarts"
 version: "0.0.1"
 release: "0.0.1"
-dependencies: []
+dependencies:
+  - jinja2
 description: "Draw echars using pyexcel data"

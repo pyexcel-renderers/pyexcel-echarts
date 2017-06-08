@@ -15,7 +15,16 @@ pyexcel-echarts - Let you focus on data, instead of file formats
    :target: http://pyexcel-echarts.readthedocs.org/en/latest/
 
 
-**pyexcel-echarts** does xyz.
+**pyexcel-echarts** generate `echarts <http://echarts.baidu.com>`_.
+
+
+Evaluation
+===============
+
+Please visit demo directory and run ::
+
+   $ make
+
 
 
 
