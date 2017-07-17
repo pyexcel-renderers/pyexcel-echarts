@@ -90,7 +90,8 @@ class TimeSeriesOption(EChartsOption):
         self._config['yAxis'] = []
 
     def configure(self, sheet,
-                  timeseries_in_column=0, value_in_column=1, **keywords):
+                  timeseries_in_column=0, value_in_column=1, y_max=500,
+                  **keywords):
         self.set_title(sheet.name)
         self._config['xAxis'].append(dict(
             type='category',
@@ -102,7 +103,7 @@ class TimeSeriesOption(EChartsOption):
         self._config['yAxis'].append(dict(
             name='NO2(xx)',
             type='value',
-            max=500
+            max=y_max
         ))
         self._config['tooltip'] = dict(
             trigger='axis',
