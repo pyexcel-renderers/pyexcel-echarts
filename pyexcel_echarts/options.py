@@ -122,6 +122,22 @@ class TimeSeriesOption(EChartsOption):
         ))
 
 
+@PluginInfo(
+    'echarts',
+    tags=['line']
+    )
+class LineOption(EChartsOption):
+
+    def configure(self, sheet,
+                  label_x_in_column=0, label_y_in_row=0, **keywords):
+        sheet.name_columns_by_row(label_y_in_row)
+        sheet.name_rows_by_column(label_x_in_column)
+        self.set_title(sheet.name)
+        self.set_axis_x(sheet.colnames)
+        for rowname in sheet.rownames:
+            self.add_chart(rowname, 'bar', sheet.row[rowname])
+
+
 class EChartsOptionManager(PluginManager):
     def __init__(self):
         PluginManager.__init__(self, 'echarts')
