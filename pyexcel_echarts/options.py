@@ -1,5 +1,5 @@
 import sys
-import pyecharts as pygal
+import pyecharts
 from pyexcel._compact import StringIO
 
 from lml.plugin import PluginInfo, PluginManager
@@ -18,7 +18,9 @@ CHART_TYPES = dict(
     dot='Dot',
     funnel='Funnel',
     xy='XY',
-    histogram='Histogram')
+    histogram='Histogram',
+    scatter3d='Scatter3D'
+)
 
 
 class Chart(object):
@@ -40,7 +42,7 @@ class SimpleLayout(Chart):
             sheet.name_columns_by_row(label_y_in_row)
         params.update(keywords)
         the_dict = sheet.to_dict()
-        cls = getattr(pygal, self._chart_class)
+        cls = getattr(pyecharts, self._chart_class)
         instance = cls(title=title, **params)
         for key in the_dict:
             data_array = [value for value in the_dict[key] if value != '']
@@ -59,9 +61,23 @@ class PieLayout(Chart):
         params = {}
         self.params = {}
         params.update(keywords)
-        cls = getattr(pygal, self._chart_class)
+        cls = getattr(pyecharts, self._chart_class)
         instance = cls(title=title, **params)
         instance.add("", sheet.row[0], sheet.row[1])
+        return instance
+
+
+@PluginInfo('chart', tags=['scatter3d'])
+class Scatter3DLayout(Chart):
+
+    def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     **keywords):
+        params = {}
+        self.params = {}
+        params.update(keywords)
+        cls = getattr(pyecharts, self._chart_class)
+        instance = cls(title=title, **params)
+        instance.add("", sheet.array)
         return instance
 
 
@@ -83,7 +99,7 @@ class ComplexLayout(Chart):
         for name in sheet.rownames:
             schema.append((name, max(sheet.row[name])))
         the_dict = sheet.to_dict()
-        cls = getattr(pygal, self._chart_class)
+        cls = getattr(pyecharts, self._chart_class)
         instance = cls(title=title, **params)
         instance.config(schema)
         for key in the_dict:
@@ -98,7 +114,7 @@ class Histogram(Chart):
                      height_in_column=0, start_in_column=1,
                      stop_in_column=2,
                      **keywords):
-        cls = getattr(pygal, self._chart_class)
+        cls = getattr(pyecharts, self._chart_class)
         instance = cls(title=title, **keywords)
         self._render_a_sheet(instance, sheet,
                              height_in_column=height_in_column,
@@ -111,7 +127,7 @@ class Histogram(Chart):
                     stop_in_column=2,
                     **keywords):
         from pyexcel.book import to_book
-        cls = getattr(pygal, self._chart_class)
+        cls = getattr(pyecharts, self._chart_class)
         instance = cls(title=title, **keywords)
         for sheet in to_book(book):
             self._render_a_sheet(instance, sheet,
@@ -138,7 +154,7 @@ class XY(Chart):
                      x_in_column=0,
                      y_in_column=1,
                      **keywords):
-        cls = getattr(pygal, self._chart_class)
+        cls = getattr(pyecharts, self._chart_class)
         instance = cls(title=title, **keywords)
         self._render_a_sheet(instance, sheet,
                              x_in_column=x_in_column,
@@ -154,7 +170,7 @@ class XY(Chart):
                     y_in_column=1,
                     **keywords):
         from pyexcel.book import to_book
-        cls = getattr(pygal, self._chart_class)
+        cls = getattr(pyecharts, self._chart_class)
         instance = cls(title=title, **keywords)
         for sheet in to_book(book):
             self._render_a_sheet(instance, sheet,
