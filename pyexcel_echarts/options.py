@@ -1,6 +1,6 @@
 import sys
 import pyecharts as pygal
-from StringIO import StringIO
+from pyexcel._compact import StringIO
 
 from lml.plugin import PluginInfo, PluginManager
 
