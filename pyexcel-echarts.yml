@@ -4,5 +4,5 @@ nick_name: "echarts"
 version: "0.0.1"
 release: "0.0.1"
 dependencies:
-  - jinja2
+  - pyecharts
 description: "Draw echars using pyexcel data"

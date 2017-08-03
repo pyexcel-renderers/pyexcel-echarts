@@ -1,153 +1,190 @@
-import json
-from collections import defaultdict
+import sys
+import pyecharts as pygal
+from StringIO import StringIO
 
-from datetime import date, datetime
 from lml.plugin import PluginInfo, PluginManager
 
+PY2 = sys.version_info[0] == 2
 
-DEFAULTS = dict(
-    title={},
-    tooltip={},
-    legend=defaultdict(list),
-    series=[]
-)
+DEFAULT_TITLE = 'pyexcel via pyechars'
 
-
-class DateTimeEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, date):
-            date_string = obj.strftime('%Y/%m/%d')
-            return date_string
-        if isinstance(obj, datetime):
-            datetime_string = obj.strftime("%Y/%m/%d %H:%M:%S")
-            return datetime_string
-        return json.JSONEncoder.default(self, obj)
+CHART_TYPES = dict(
+    pie='Pie',
+    box='Box',
+    line='Line',
+    bar='Bar',
+    stacked_bar='StackedBar',
+    radar='Radar',
+    dot='Dot',
+    funnel='Funnel',
+    xy='XY',
+    histogram='Histogram')
 
 
-def _dumps(data):
-    return json.dumps(data, cls=DateTimeEncoder)
+class Chart(object):
+
+    def __init__(self, cls_name):
+        self._chart_class = CHART_TYPES.get(cls_name, 'line')
+        self._tmp_io = StringIO()
 
 
-class EChartsOption(object):
+@PluginInfo('chart', tags=['box'])
+class SimpleLayout(Chart):
+
+    def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     label_y_in_row=0,
+                     **keywords):
+        params = {}
+        self.params = {}
+        if len(sheet.colnames) == 0:
+            sheet.name_columns_by_row(label_y_in_row)
+        params.update(keywords)
+        the_dict = sheet.to_dict()
+        cls = getattr(pygal, self._chart_class)
+        instance = cls(title=title, **params)
+        for key in the_dict:
+            data_array = [value for value in the_dict[key] if value != '']
+            instance.add(key, data_array)
+
+        return instance
+
+
+@PluginInfo('chart', tags=['pie'])
+class PieLayout(Chart):
+
+    def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     label_y_in_row=0,
+                     value_x_in_row=1,
+                     **keywords):
+        params = {}
+        self.params = {}
+        params.update(keywords)
+        cls = getattr(pygal, self._chart_class)
+        instance = cls(title=title, **params)
+        instance.add("", sheet.row[0], sheet.row[1])
+        return instance
+
+
+@PluginInfo('chart',
+            tags=['line', 'bar', 'stacked_bar',
+                  'radar', 'dot', 'funnel'])
+class ComplexLayout(Chart):
+
+    def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     label_x_in_column=0, label_y_in_row=0,
+                     **keywords):
+        params = {}
+        self.params = {}
+        if len(sheet.colnames) == 0:
+            sheet.name_columns_by_row(label_y_in_row)
+        if len(sheet.rownames) == 0:
+            sheet.name_rows_by_column(label_x_in_column)
+        schema = []
+        for name in sheet.rownames:
+            schema.append((name, max(sheet.row[name])))
+        the_dict = sheet.to_dict()
+        cls = getattr(pygal, self._chart_class)
+        instance = cls(title=title, **params)
+        instance.config(schema)
+        for key in the_dict:
+            data_array = [value for value in the_dict[key] if value != '']
+            instance.add(key, [data_array])
+        return instance
+
+
+@PluginInfo('chart', tags=['histogram'])
+class Histogram(Chart):
+    def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     height_in_column=0, start_in_column=1,
+                     stop_in_column=2,
+                     **keywords):
+        cls = getattr(pygal, self._chart_class)
+        instance = cls(title=title, **keywords)
+        self._render_a_sheet(instance, sheet,
+                             height_in_column=height_in_column,
+                             start_in_column=start_in_column,
+                             stop_in_column=stop_in_column)
+        return instance
+
+    def render_book(self, book, title=DEFAULT_TITLE,
+                    height_in_column=0, start_in_column=1,
+                    stop_in_column=2,
+                    **keywords):
+        from pyexcel.book import to_book
+        cls = getattr(pygal, self._chart_class)
+        instance = cls(title=title, **keywords)
+        for sheet in to_book(book):
+            self._render_a_sheet(instance, sheet,
+                                 height_in_column=height_in_column,
+                                 start_in_column=start_in_column,
+                                 stop_in_column=stop_in_column)
+        return instance
+
+    def _render_a_sheet(self, instance, sheet,
+                        height_in_column=0, start_in_column=1,
+                        stop_in_column=2):
+        histograms = zip(sheet.column[height_in_column],
+                         sheet.column[start_in_column],
+                         sheet.column[stop_in_column])
+        if PY2 is False:
+            histograms = list(histograms)
+        instance.add(sheet.name, histograms)
+
+
+@PluginInfo('chart', tags=['xy'])
+class XY(Chart):
+
+    def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     x_in_column=0,
+                     y_in_column=1,
+                     **keywords):
+        cls = getattr(pygal, self._chart_class)
+        instance = cls(title=title, **keywords)
+        self._render_a_sheet(instance, sheet,
+                             x_in_column=x_in_column,
+                             y_in_column=y_in_column)
+        points = zip(sheet.column[x_in_column],
+                     sheet.column[y_in_column])
+        instance.add(sheet.name, points)
+        instance.render(path=self._tmp_io)
+        return self._tmp_io.getvalue()
+
+    def render_book(self, book, title=DEFAULT_TITLE,
+                    x_in_column=0,
+                    y_in_column=1,
+                    **keywords):
+        from pyexcel.book import to_book
+        cls = getattr(pygal, self._chart_class)
+        instance = cls(title=title, **keywords)
+        for sheet in to_book(book):
+            self._render_a_sheet(instance, sheet,
+                                 x_in_column=x_in_column,
+                                 y_in_column=y_in_column)
+        instance.render(path=self._tmp_io)
+        return self._tmp_io.getvalue()
+
+    def _render_a_sheet(self, instance, sheet,
+                        x_in_column=0,
+                        y_in_column=1):
+
+        points = zip(sheet.column[x_in_column],
+                     sheet.column[y_in_column])
+        if not PY2:
+            points = list(points)
+        instance.add(sheet.name, points)
+
+
+class ChartManager(PluginManager):
     def __init__(self):
-        self._config = {}
-        self._config.update(DEFAULTS)
-
-    def set_title(self, title):
-        self._config['title']['text'] = title
-
-    def add_chart(self, name, chart_type, data):
-        self._config['legend']['data'].append(name)
-        self._config['series'].append(
-            dict(
-                name=name,
-                type=chart_type,
-                data=data
-            ))
-
-    def configure(self, instance, **keywords):
-        raise NotImplementedError("")
-
-    def to_json(self):
-        return _dumps(self._config)
-
-
-@PluginInfo(
-    'echarts',
-    tags=['bar']
-    )
-class BarOption(EChartsOption):
-
-    def __init__(self):
-        super(BarOption, self).__init__()
-        self._config['xAxis'] = {}
-        self._config['yAxis'] = {}
-
-    def configure(self, sheet,
-                  label_x_in_column=0, label_y_in_row=0, **keywords):
-        sheet.name_columns_by_row(label_y_in_row)
-        sheet.name_rows_by_column(label_x_in_column)
-        self.set_title(sheet.name)
-        self.set_axis_x(sheet.colnames)
-        for rowname in sheet.rownames:
-            self.add_chart(rowname, 'bar', sheet.row[rowname])
-
-    def set_axis_x(self, data):
-        self._config['xAxis']['data'] = data
-
-    def set_axis_y(self, data):
-        self._config['yAxis']['data'] = data
-
-
-@PluginInfo(
-    'echarts',
-    tags=['timeseries']
-)
-class TimeSeriesOption(EChartsOption):
-    def __init__(self):
-        super(TimeSeriesOption, self).__init__()
-        self._config['xAxis'] = []
-        self._config['yAxis'] = []
-
-    def configure(self, sheet,
-                  timeseries_in_column=0, value_in_column=1, y_max=500,
-                  **keywords):
-        self.set_title(sheet.name)
-        self._config['xAxis'].append(dict(
-            type='category',
-            boundayGap=False,
-            axisLine=dict(onZero=True),
-            data=sheet.column[timeseries_in_column],
-            position='top'
-        ))
-        self._config['yAxis'].append(dict(
-            name='NO2(xx)',
-            type='value',
-            max=y_max
-        ))
-        self._config['tooltip'] = dict(
-            trigger='axis',
-            axisPointer=dict(animation=False)
-        )
-        self._config['axisPointer'] = dict(link=dict(xAxisIndex='all'))
-        self._config['legend'] = dict(
-            data=['NO2']
-        )
-        self._config['series'].append(dict(
-            name='NO2',
-            type='line',
-            symbolSize=8,
-            hoverAnimation=False,
-            data=sheet.column[value_in_column]
-        ))
-
-
-@PluginInfo(
-    'echarts',
-    tags=['line']
-    )
-class LineOption(EChartsOption):
-
-    def configure(self, sheet,
-                  label_x_in_column=0, label_y_in_row=0, **keywords):
-        sheet.name_columns_by_row(label_y_in_row)
-        sheet.name_rows_by_column(label_x_in_column)
-        self.set_title(sheet.name)
-        self.set_axis_x(sheet.colnames)
-        for rowname in sheet.rownames:
-            self.add_chart(rowname, 'bar', sheet.row[rowname])
-
-
-class EChartsOptionManager(PluginManager):
-    def __init__(self):
-        PluginManager.__init__(self, 'echarts')
+        PluginManager.__init__(self, 'chart')
 
     def get_a_plugin(self, key, **keywords):
+        self._logger.debug("get a plugin called")
         plugin = self.load_me_now(key)
-        return plugin()
+        return plugin(key)
 
     def raise_exception(self, key):
-        raise Exception("No support for diagram %s" % key)
+        raise Exception("No support for " + key)
 
 
-MANAGER = EChartsOptionManager()
+MANAGER = ChartManager()
