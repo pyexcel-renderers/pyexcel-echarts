@@ -32,4 +32,4 @@ class Chart(Renderer):
             if PY2:
                 self._stream.write(fout.read())
             else:
-                self._stream.write(fout.read().decode('utf-8'))                
+                self._stream.write(fout.read().decode('utf-8'))
