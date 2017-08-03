@@ -71,13 +71,16 @@ class PieLayout(Chart):
 class Scatter3DLayout(Chart):
 
     def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     is_visualmap=True,
+                     visual_range_color=None,
                      **keywords):
         params = {}
         self.params = {}
         params.update(keywords)
         cls = getattr(pyecharts, self._chart_class)
         instance = cls(title=title, **params)
-        instance.add("", sheet.array)
+        instance.add("", sheet.array, is_visualmap=is_visualmap,
+                     visual_range_color=visual_range_color)
         return instance
 
 
