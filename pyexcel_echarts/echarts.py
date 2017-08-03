@@ -1,5 +1,6 @@
 import tempfile
 
+from pyexcel._compact import PY2
 from pyexcel.renderer import Renderer
 from pyexcel_echarts.options import MANAGER
 
@@ -28,4 +29,7 @@ class Chart(Renderer):
         with tempfile.NamedTemporaryFile(suffix=".html") as fout:
             instance.render(path=fout.name)
             fout.seek(0)
-            self._stream.write(fout.read())
+            if PY2:
+                self._stream.write(fout.read())
+            else:
+                self._stream.write(fout.read().decode('utf-8'))                
