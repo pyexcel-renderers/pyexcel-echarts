@@ -1,37 +1,64 @@
-import tempfile
-
-from pyexcel._compact import PY2
 from pyexcel.renderer import Renderer
 from pyexcel_echarts.options import MANAGER
 
 
+DEFAULT_TITLE = 'pyexcel via pyechars'
+
+
 class Chart(Renderer):
-    def render_sheet(self, sheet, chart_type='bar', embed=False, **keywords):
-        charter = MANAGER.get_a_plugin(chart_type)
-        chart_instance = charter.render_sheet(
+    def render_sheet(self, sheet, chart_type='bar', embed=False,
+                     title=DEFAULT_TITLE,
+                     subtitle="",
+                     width=800,
+                     height=400,
+                     title_pos="auto",
+                     title_top="auto",
+                     title_color="#000",
+                     subtitle_color="#aaa",
+                     title_text_size=18,
+                     subtitle_text_size=12,
+                     background_color="#fff",
+                     is_grid=False,
+                     **keywords):
+        charter = MANAGER.get_a_plugin(
+            chart_type,
+            embed=embed,
+            title=title, subtitle=subtitle,
+            width=width, height=height,
+            title_pos=title_pos, title_top=title_top,
+            title_color=title_color, title_text_size=title_text_size,
+            subtitle_color=subtitle_color,
+            subtitle_text_size=subtitle_text_size,
+            background_color=background_color, is_grid=is_grid)
+        charter.render_sheet(
             sheet, **keywords)
 
-        self._write_content(chart_instance, embed)
+        self._stream.write(str(charter))
 
-        with tempfile.NamedTemporaryFile(suffix=".html") as fout:
-            chart_instance.render(path=fout.name)
-            fout.seek(0)
-            self._stream.write(fout.read())
-
-    def render_book(self, book, chart_type='bar', embed=False, **keywords):
-        charter = MANAGER.get_a_plugin(chart_type)
-        chart_instance = charter.render_book(book,
-                                             **keywords)
-        self._write_content(chart_instance, embed)
-
-    def _write_content(self, instance, embed):
-        if embed:
-            content = instance.render_embed()
-        else:
-            with tempfile.NamedTemporaryFile(suffix=".html") as fout:
-                instance.render(path=fout.name)
-                fout.seek(0)
-                content = fout.read()
-        if not PY2:
-            content = content.decode('utf-8')
-        self._stream.write(content)
+    def render_book(self, book, chart_type='bar', embed=False,
+                    title=DEFAULT_TITLE,
+                    subtitle="",
+                    width=800,
+                    height=400,
+                    title_pos="auto",
+                    title_top="auto",
+                    title_color="#000",
+                    subtitle_color="#aaa",
+                    title_text_size=18,
+                    subtitle_text_size=12,
+                    background_color="#fff",
+                    is_grid=False,
+                    **keywords):
+        charter = MANAGER.get_a_plugin(
+            chart_type,
+            embed=embed,
+            title=title, subtitle=subtitle,
+            width=width, height=height,
+            title_pos=title_pos, title_top=title_top,
+            title_color=title_color, title_text_size=title_text_size,
+            subtitle_color=subtitle_color,
+            subtitle_text_size=subtitle_text_size,
+            background_color=background_color, is_grid=is_grid)
+        charter.render_book(book,
+                            **keywords)
+        self._stream.write(str(charter))

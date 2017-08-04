@@ -12,6 +12,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
+    'sphinxcontrib.excel',
     'sphinxcontrib.spelling',
     'pyexcel_sphinx_integration'
 ]

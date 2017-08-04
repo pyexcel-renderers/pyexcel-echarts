@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath('.'))
 
 {%block SPHINX_EXTENSIONS%}
     'sphinx.ext.autosummary',
+    'sphinxcontrib.excel',
     'sphinxcontrib.spelling',
     'pyexcel_sphinx_integration'
 {%endblock%}

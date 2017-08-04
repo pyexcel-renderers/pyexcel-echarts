@@ -87,8 +87,7 @@ class PyechartsDirective(Directive):
 class PyechartsWithCode(PyechartsDirective):
 
     def run(self):
-        node_list = super(PyechartsWithCode, self).run()
-        node_list.extend(CodeBlock(
+        node_list = CodeBlock(
             self.name,
             ['python'],
             self.options,
@@ -97,7 +96,8 @@ class PyechartsWithCode(PyechartsDirective):
             self.content_offset,
             self.block_text,
             self.state,
-            self.state_machine).run())
+            self.state_machine).run()
+        node_list.extend(super(PyechartsWithCode, self).run())
 
         return [docutils.nodes.compound('', *node_list)]
 
