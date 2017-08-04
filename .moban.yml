@@ -9,6 +9,8 @@ targets:
   - README.rst: README.rst
   - setup.py: setup.py
   - requirements.txt: requirements.txt
+  - 'docs/source/conf.py': 'docs/source/conf.py'
+  - 'docs/source/index.rst': 'docs/source/index.rst'
   - MANIFEST.in: MANIFEST.in.jj2
   - "tests/requirements.txt": "tests/requirements.txt"
   - test.sh: test.script.jj2
