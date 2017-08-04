@@ -1,2 +1,3 @@
 sphinxcontrib-spelling
+sphinxcontrib-excel
 https://github.com/pyexcel/pyexcel-handsontable/archive/master.zip
