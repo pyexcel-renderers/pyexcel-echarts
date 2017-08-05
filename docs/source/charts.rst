@@ -17,6 +17,24 @@ Here is the source code using pyexcel
          title=title, width=800, height=600, embed=True, legend_top='bottom')
 
 
+Radar chart
+********************************************************************************
+
+.. pyexcel-table:: data/radar.csv
+   :width: 500
+
+Here is the source code using pyexcel
+
+.. pyexcel-code::
+
+    title = 'Browser usage in February 2012 (in %)'
+    sheet = pyexcel.get_sheet(file_name='data/radar.csv')
+    chart = sheet.plot(chart_type='radar', file_type='echarts.html',
+         title=title, width=800, height=600, embed=True, legend_top='bottom')
+
+
+Scatter 3D chart
+********************************************************************************
 .. pyexcel-table:: data/scatter_3d.csv
    :width: 250
    :height: 300
