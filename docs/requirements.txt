@@ -1,4 +1,4 @@
 sphinxcontrib-spelling
 https://github.com/pyexcel/sphinxcontrib-excel/archive/master.zip
-https://github.com/pyexcel/pyecharts/archive/django-flask.zip
+https://github.com/pyexcel/pyecharts/archive/master.zip
 https://github.com/pyexcel/pyexcel-handsontable/archive/master.zip

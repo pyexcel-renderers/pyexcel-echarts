@@ -1,1 +1,2 @@
-https://github.com/pyexcel/pyecharts/archive/django-flask.zip
+https://github.com/pyexcel/pyecharts/archive/master.zip
+
