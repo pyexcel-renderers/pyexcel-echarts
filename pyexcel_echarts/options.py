@@ -28,8 +28,8 @@ class Chart(object):
 
     def __init__(self, cls_name, embed=False, title=DEFAULT_TITLE,
                  subtitle="", **keywords):
-        chart_class = CHART_TYPES.get(cls_name, 'line')
-        cls = getattr(pyecharts, chart_class)
+        self._chart_class = CHART_TYPES.get(cls_name, 'line')
+        cls = getattr(pyecharts, self._chart_class)
         self.instance = cls(title, subtitle, **keywords)
         self._tmp_io = StringIO()
         self._embed = embed
@@ -80,9 +80,8 @@ class Scatter3DLayout(Chart):
 
 
 @PluginInfo('chart',
-            tags=['line', 'bar', 'stacked_bar',
-                  'radar', 'dot', 'funnel'])
-class ComplexLayout(Chart):
+            tags=['radar'])
+class RadarChart(Chart):
 
     def render_sheet(self, sheet, title=DEFAULT_TITLE,
                      label_x_in_column=0, label_y_in_row=0,
@@ -99,6 +98,25 @@ class ComplexLayout(Chart):
         for key in the_dict:
             data_array = [value for value in the_dict[key] if value != '']
             self.instance.add(key, [data_array], **keywords)
+
+
+@PluginInfo('chart',
+            tags=['bar'])
+class BarChart(Chart):
+
+    def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     label_x_in_column=0, label_y_in_row=0,
+                     **keywords):
+        if len(sheet.colnames) == 0:
+            sheet.name_columns_by_row(label_y_in_row)
+        if len(sheet.rownames) == 0:
+            sheet.name_rows_by_column(label_x_in_column)
+        schema = []
+        for name in sheet.rownames:
+            schema.append((name, max(sheet.row[name])))
+        for key in sheet.rownames:
+            data_array = [value for value in sheet.row[key] if value != '']
+            self.instance.add(key, sheet.colnames, data_array, **keywords)
 
 
 class ChartManager(PluginManager):

@@ -32,6 +32,21 @@ Here is the source code using pyexcel
     chart = sheet.plot(chart_type='radar', file_type='echarts.html',
          title=title, width=800, height=600, embed=True, legend_top='bottom')
 
+Bar chart
+********************************************************************************
+
+.. pyexcel-table:: data/radar.csv
+   :width: 500
+
+Here is the source code using pyexcel
+
+.. pyexcel-code::
+
+    title = 'Water precipitation vs evaporation in a year'
+    sheet = pyexcel.get_sheet(file_name='data/bar.csv')
+    chart = sheet.plot(chart_type='radar', file_type='echarts.html',
+         title=title, width=800, height=600, embed=True, legend_top='bottom')
+
 
 Scatter 3D chart
 ********************************************************************************

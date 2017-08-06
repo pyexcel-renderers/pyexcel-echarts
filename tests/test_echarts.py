@@ -13,6 +13,11 @@ def test_radar_chart():
     s.save_as('radar.echarts.html', chart_type='radar')
 
 
+def test_bar_chart():
+    s = p.get_sheet(file_name=get_fixtures('bar.csv'))
+    s.save_as('bar.echarts.html', chart_type='bar')
+
+
 def test_scatter3d_chart():
 
     s = p.get_sheet(file_name=get_fixtures('scatter_3d.csv'))
