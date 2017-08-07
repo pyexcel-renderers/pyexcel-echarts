@@ -3,4 +3,5 @@
 pyexcel
 pyexcel-xls
 docutils
+sphinx
 {%endblock%}
