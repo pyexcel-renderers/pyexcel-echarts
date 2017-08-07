@@ -11,6 +11,11 @@ def test_pie_chart():
     s.save_as('pie.echarts.html', chart_type='pie')
 
 
+def test_kline_chart():
+    s = p.get_sheet(file_name=get_fixtures('kline.csv'))
+    s.save_as('kline.echarts.html', chart_type='kline', legend='daily k')
+
+
 def test_radar_chart():
     s = p.get_sheet(file_name=get_fixtures('radar.csv'))
     s.save_as('radar.echarts.html', chart_type='radar')

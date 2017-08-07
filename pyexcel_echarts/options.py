@@ -21,7 +21,8 @@ CHART_TYPES = dict(
     xy='XY',
     histogram='Histogram',
     scatter3d='Scatter3D',
-    bar3d='Bar3D'
+    bar3d='Bar3D',
+    kline='Kline'
 )
 
 
@@ -69,7 +70,22 @@ class PieLayout(Chart):
                      label_y_in_row=0,
                      value_x_in_row=1,
                      **keywords):
-        self.instance.add("", sheet.row[0], sheet.row[1], **keywords)
+        self.instance.add("", sheet.row[label_y_in_row],
+                          sheet.row[value_x_in_row], **keywords)
+
+
+@PluginInfo('chart', tags=['kline'])
+class KlineLayout(Chart):
+
+    def render_sheet(self, sheet,
+                     label_x_in_column=0, label_y_in_row=0, legend="",
+                     **keywords):
+        if len(sheet.colnames) == 0:
+            sheet.name_columns_by_row(label_y_in_row)
+        if len(sheet.rownames) == 0:
+            sheet.name_rows_by_column(label_x_in_column)
+        self.instance.add(legend, sheet.rownames,
+                          list(sheet.rows()), **keywords)
 
 
 @PluginInfo('chart', tags=['scatter3d'])

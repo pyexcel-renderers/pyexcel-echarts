@@ -17,6 +17,24 @@ Here is the source code using pyexcel
          title=title, width=800, height=600, embed=True, legend_top='bottom')
 
 
+Kline chart
+********************************************************************************
+
+.. pyexcel-table:: data/kline.csv
+   :width: 400
+   :height: 350
+
+Here is the source code using pyexcel
+
+.. pyexcel-code::
+
+    title = 'Daily K Line'
+    sheet = pyexcel.get_sheet(file_name='data/kline.csv')
+    chart = sheet.plot(chart_type='kline', file_type='echarts.html',
+         title=title, legend='daily k',
+		 width=800, height=400, embed=True, legend_top='bottom')
+
+
 Radar chart
 ********************************************************************************
 
