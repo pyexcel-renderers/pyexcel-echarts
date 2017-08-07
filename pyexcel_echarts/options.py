@@ -20,7 +20,8 @@ CHART_TYPES = dict(
     funnel='Funnel',
     xy='XY',
     histogram='Histogram',
-    scatter3d='Scatter3D'
+    scatter3d='Scatter3D',
+    bar3d='Bar3D'
 )
 
 
@@ -117,6 +118,26 @@ class BarChart(Chart):
         for key in sheet.rownames:
             data_array = [value for value in sheet.row[key] if value != '']
             self.instance.add(key, sheet.colnames, data_array, **keywords)
+
+
+@PluginInfo('chart',
+            tags=['bar3d'])
+class Bar3DChart(Chart):
+
+    def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     label_x_in_column=0, label_y_in_row=0,
+                     **keywords):
+        if len(sheet.colnames) == 0:
+            sheet.name_columns_by_row(label_y_in_row)
+        if len(sheet.rownames) == 0:
+            sheet.name_rows_by_column(label_x_in_column)
+        data = []
+        for x in range(len(sheet.rownames)):
+            for y in range(len(sheet.colnames)):
+                data.append([y, x, sheet[x, y]])
+
+        self.instance.add("", sheet.colnames, sheet.rownames,
+                          data, **keywords)
 
 
 class ChartManager(PluginManager):
