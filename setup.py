@@ -14,7 +14,7 @@ VERSION = '0.0.1'
 EMAIL = 'wangc_2011@hotmail.com'
 LICENSE = 'New BSD'
 DESCRIPTION = (
-    'Draw echars using pyexcel data' +
+    'draw echarts using pyexcel data via pyecharts' +
     ''
 )
 URL = 'https://github.com/pyexcel/pyexcel-echarts'

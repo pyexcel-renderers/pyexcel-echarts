@@ -6,4 +6,4 @@ current_version: 0.0.1
 release: "0.0.1"
 dependencies:
   - pyecharts
-description: "Draw echars using pyexcel data"
+description: "draw echarts using pyexcel data via pyecharts"

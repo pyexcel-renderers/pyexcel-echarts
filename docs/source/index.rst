@@ -11,7 +11,7 @@
 Introduction
 -------------
 
-**pyexcel-echarts** is Draw echars using pyexcel data
+**pyexcel-echarts** draw echarts using pyexcel data via pyecharts
 
 
 Installation

@@ -3,7 +3,7 @@ import os
 import sys
 sys.path.append(os.path.abspath('.'))
 DESCRIPTION = (
-    'Draw echars using pyexcel data' +
+    'draw echarts using pyexcel data via pyecharts' +
     ''
 )
 extensions = [

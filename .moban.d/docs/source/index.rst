@@ -3,7 +3,7 @@
 Introduction
 -------------
 
-**{{name}}** is {{description}}
+**{{name}}** {{description}}
 
 
 Installation
