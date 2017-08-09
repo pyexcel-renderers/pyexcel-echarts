@@ -59,6 +59,11 @@ def test_funnel_chart():
     s.save_as('funnel.echarts.html', chart_type='funnel')
 
 
+def test_line_chart():
+    s = p.get_sheet(file_name=get_fixtures('line.csv'))
+    s.save_as('line.echarts.html', chart_type='line')
+
+
 def test_gauge_chart():
     s = p.get_sheet(file_name=get_fixtures('gauge.csv'))
     s.save_as('gauge.echarts.html', chart_type='gauge')

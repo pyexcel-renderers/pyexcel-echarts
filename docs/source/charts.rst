@@ -33,6 +33,22 @@ Here is the source code using pyexcel
          title=title, width=800, height=600, embed=True, legend_top='bottom')
 
 
+Line chart
+********************************************************************************
+
+.. pyexcel-table:: data/line.csv
+   :width: 400
+
+Here is the source code using pyexcel
+
+.. pyexcel-code::
+
+    title = 'Some sales figures'
+    sheet = pyexcel.get_sheet(file_name='data/line.csv')
+    chart = sheet.plot(chart_type='line', file_type='echarts.html',
+         title=title, width=800, height=600, embed=True, legend_top='bottom')
+
+
 Gauge chart
 ********************************************************************************
 

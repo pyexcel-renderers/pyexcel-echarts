@@ -111,6 +111,23 @@ class KlineLayout(Chart):
                           list(sheet.rows()), **keywords)
 
 
+@PluginInfo('chart', tags=['line'])
+class LineLayout(Chart):
+
+    def render_sheet(self, sheet,
+                     label_x_in_column=0, label_y_in_row=0,
+                     **keywords):
+        if len(sheet.colnames) == 0:
+            sheet.name_columns_by_row(label_y_in_row)
+        if len(sheet.rownames) == 0:
+            sheet.name_rows_by_column(label_x_in_column)
+
+        for legend in sheet.rownames:
+            self.instance.add(
+                legend, sheet.colnames,
+                sheet.row[legend], **keywords)
+
+
 @PluginInfo('chart', tags=['scatter3d'])
 class Scatter3DLayout(Chart):
 
