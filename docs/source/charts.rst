@@ -17,6 +17,54 @@ Here is the source code using pyexcel
          title=title, width=800, height=600, embed=True, legend_top='bottom')
 
 
+Funnel chart
+********************************************************************************
+
+.. pyexcel-table:: data/funnel.csv
+   :width: 400
+
+Here is the source code using pyexcel
+
+.. pyexcel-code::
+
+    title = 'Some sales figures'
+    sheet = pyexcel.get_sheet(file_name='data/funnel.csv')
+    chart = sheet.plot(chart_type='funnel', file_type='echarts.html',
+         title=title, width=800, height=600, embed=True, legend_top='bottom')
+
+
+Gauge chart
+********************************************************************************
+
+.. pyexcel-table:: data/gauge.csv
+   :width: 400
+
+Here is the source code using pyexcel
+
+.. pyexcel-code::
+
+    title = 'Some sales figures'
+    sheet = pyexcel.get_sheet(file_name='data/gauge.csv')
+    chart = sheet.plot(chart_type='gauge', file_type='echarts.html',
+         title=title, width=800, height=600, embed=True, legend_top='bottom')
+
+
+Effectscatter chart
+********************************************************************************
+
+.. pyexcel-table:: data/effectscatter.csv
+   :width: 400
+
+Here is the source code using pyexcel
+
+.. pyexcel-code::
+
+    title = 'Effect scatter'
+    sheet = pyexcel.get_sheet(file_name='data/effectscatter.csv')
+    chart = sheet.plot(chart_type='effectscatter', file_type='echarts.html',
+         title=title, width=800, height=600, embed=True, legend_top='bottom')
+
+
 Kline chart
 ********************************************************************************
 
@@ -86,6 +134,20 @@ Here is the source code using pyexcel
 		 visual_range=[0, 20], grid3D_width=200, grid3D_depth=80,
          title=title, width=800, height=600, embed=True, legend_top='bottom')
 
+
+Heatmap
+********************************************************************************
+
+The same bar3d data is plotted as heatmap:
+
+.. pyexcel-code::
+
+    title = 'Example heatmap'
+    sheet = pyexcel.get_sheet(file_name='data/bar3d.csv')
+    chart = sheet.plot(chart_type='heatmap', file_type='echarts.html',
+         is_visualmap=True, visual_range=[0, 20],
+		 visual_text_color="#000", visual_orient='horizontal',
+         title=title, width=800, height=600, embed=True, legend_top='bottom')
 
 
 

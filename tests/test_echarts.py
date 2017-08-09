@@ -39,3 +39,26 @@ def test_bar3d_chart():
               is_visualmap=True, visual_range_color=RANGE_COLOR,
               visual_range=[0, 20],
               grid3D_width=200, grid3D_depth=80)
+
+
+def test_heatmap_chart():
+    s = p.get_sheet(file_name=get_fixtures('bar3d.csv'))
+    s.save_as('heatmap.echarts.html', chart_type='heatmap',
+              is_visualmap=True, visual_range_color=RANGE_COLOR,
+              visual_range=[0, 20],
+              visual_text_color="#000", visual_orient='horizontal')
+
+
+def test_effectscatter_chart():
+    s = p.get_sheet(file_name=get_fixtures('effectscatter.csv'))
+    s.save_as('effectscatter.echarts.html', chart_type='effectscatter')
+
+
+def test_funnel_chart():
+    s = p.get_sheet(file_name=get_fixtures('funnel.csv'))
+    s.save_as('funnel.echarts.html', chart_type='funnel')
+
+
+def test_gauge_chart():
+    s = p.get_sheet(file_name=get_fixtures('gauge.csv'))
+    s.save_as('gauge.echarts.html', chart_type='gauge')

@@ -10,19 +10,19 @@ from pyexcel._compact import PY2
 DEFAULT_TITLE = 'pyexcel via pyechars'
 
 CHART_TYPES = dict(
-    pie='Pie',
     box='Box',
-    line='Line',
     bar='Bar',
-    stacked_bar='StackedBar',
-    radar='Radar',
-    dot='Dot',
-    funnel='Funnel',
-    xy='XY',
-    histogram='Histogram',
-    scatter3d='Scatter3D',
     bar3d='Bar3D',
-    kline='Kline'
+    effectscatter='EffectScatter',
+    funnel='Funnel',
+    gauge='Gauge',
+    heatmap='HeatMap',
+    kline='Kline',
+    line='Line',
+    pie='Pie',
+    radar='Radar',
+    scatter3d='Scatter3D',
+    xy='XY'
 )
 
 
@@ -63,7 +63,7 @@ class SimpleLayout(Chart):
             self.instance.add(key, data_array, **keywords)
 
 
-@PluginInfo('chart', tags=['pie'])
+@PluginInfo('chart', tags=['pie', 'funnel'])
 class PieLayout(Chart):
 
     def render_sheet(self, sheet,
@@ -72,6 +72,29 @@ class PieLayout(Chart):
                      **keywords):
         self.instance.add("", sheet.row[label_y_in_row],
                           sheet.row[value_x_in_row], **keywords)
+
+
+@PluginInfo('chart', tags=['gauge'])
+class Gauge(Chart):
+
+    def render_sheet(self, sheet,
+                     label_y_in_row=0,
+                     value_x_in_row=1,
+                     **keywords):
+        for i in range(len(sheet.row[label_y_in_row])):
+            self.instance.add("", sheet.row[label_y_in_row][i],
+                              sheet.row[value_x_in_row][i], **keywords)
+
+
+@PluginInfo('chart', tags=['effectscatter'])
+class EffectScatter(Chart):
+
+    def render_sheet(self, sheet,
+                     value_x_in_row=0,
+                     value_y_in_row=1,
+                     **keywords):
+        self.instance.add(sheet.name, sheet.row[value_x_in_row],
+                          sheet.row[value_y_in_row], **keywords)
 
 
 @PluginInfo('chart', tags=['kline'])
@@ -137,7 +160,7 @@ class BarChart(Chart):
 
 
 @PluginInfo('chart',
-            tags=['bar3d'])
+            tags=['bar3d', 'heatmap'])
 class Bar3DChart(Chart):
 
     def render_sheet(self, sheet, title=DEFAULT_TITLE,
