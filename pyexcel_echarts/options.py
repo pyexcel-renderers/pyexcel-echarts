@@ -28,17 +28,19 @@ CHART_TYPES = dict(
 
 class Chart(object):
 
-    def __init__(self, cls_name, embed=False, title=DEFAULT_TITLE,
+    def __init__(self, cls_name, mode='embed', title=DEFAULT_TITLE,
                  subtitle="", **keywords):
         self._chart_class = CHART_TYPES.get(cls_name, 'line')
         cls = getattr(pyecharts, self._chart_class)
         self.instance = cls(title, subtitle, **keywords)
         self._tmp_io = StringIO()
-        self._embed = embed
+        self._mode = mode
 
     def __str__(self):
-        if self._embed:
+        if self._mode == 'embed':
             content = self.instance.render_embed()
+        elif self._mode == 'notebook':
+            content = self.instance._repr_html_()
         else:
             with tempfile.NamedTemporaryFile(suffix=".html") as fout:
                 self.instance.render(path=fout.name)

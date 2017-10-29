@@ -17,7 +17,8 @@ Introduction
 Installation
 -------------
 
-You can install it via pip:
+
+You can install pyexcel-echarts via pip:
 
 .. code-block:: bash
 
