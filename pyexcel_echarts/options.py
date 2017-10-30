@@ -25,7 +25,8 @@ CHART_TYPES = dict(
     pie='Pie',
     radar='Radar',
     scatter3d='Scatter3D',
-    xy='XY'
+    xy='XY',
+    wordcloud='WordCloud'
 )
 
 
@@ -175,6 +176,14 @@ class HistogramChart(Chart):
 
         self.instance.add('histogram', list(counter.keys()),
                           list(counter.values()), **keywords)
+
+
+@PluginInfo('chart', tags=['wordcloud'])
+class WordCloud(Chart):
+
+    def render_sheet(self, sheet, label=0, value=1, **keywords):
+        self.instance.add(sheet.name, sheet.column[label], sheet.column[value],
+                          **keywords)
 
 
 @PluginInfo('chart',
