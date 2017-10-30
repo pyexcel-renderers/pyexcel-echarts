@@ -1,4 +1,5 @@
 import tempfile
+from collections import Counter
 
 import pyecharts
 from pyexcel._compact import StringIO
@@ -12,8 +13,10 @@ DEFAULT_TITLE = 'pyexcel via pyechars'
 CHART_TYPES = dict(
     box='Box',
     bar='Bar',
+    hist='Bar',
     bar3d='Bar3D',
     effectscatter='EffectScatter',
+    scatter='Scatter',
     funnel='Funnel',
     gauge='Gauge',
     heatmap='HeatMap',
@@ -88,15 +91,15 @@ class Gauge(Chart):
                               sheet.row[value_x_in_row][i], **keywords)
 
 
-@PluginInfo('chart', tags=['effectscatter'])
+@PluginInfo('chart', tags=['effectscatter', 'scatter'])
 class EffectScatter(Chart):
 
     def render_sheet(self, sheet,
-                     value_x_in_row=0,
-                     value_y_in_row=1,
+                     x=0,
+                     y=1,
                      **keywords):
-        self.instance.add(sheet.name, sheet.row[value_x_in_row],
-                          sheet.row[value_y_in_row], **keywords)
+        self.instance.add(sheet.name, sheet.column[x],
+                          sheet.column[y], **keywords)
 
 
 @PluginInfo('chart', tags=['kline'])
@@ -157,6 +160,21 @@ class RadarChart(Chart):
         for key in the_dict:
             data_array = [value for value in the_dict[key] if value != '']
             self.instance.add(key, [data_array], **keywords)
+
+
+@PluginInfo('chart',
+            tags=['hist'])
+class HistogramChart(Chart):
+
+    def render_sheet(self, sheet, title=DEFAULT_TITLE,
+                     data_row=0, **keywords):
+        counter = Counter(sheet.row[data_row])
+        #total = sum([value for value in counter.values()])
+        #for key in counter:
+        #    counter[key] = float(counter[key])/float(total)
+
+        self.instance.add('histgram', list(counter.keys()),
+                          list(counter.values()), **keywords)
 
 
 @PluginInfo('chart',
