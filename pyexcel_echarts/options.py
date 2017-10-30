@@ -173,7 +173,7 @@ class HistogramChart(Chart):
         #for key in counter:
         #    counter[key] = float(counter[key])/float(total)
 
-        self.instance.add('histgram', list(counter.keys()),
+        self.instance.add('histogram', list(counter.keys()),
                           list(counter.values()), **keywords)
 
 
