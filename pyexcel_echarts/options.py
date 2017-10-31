@@ -50,7 +50,7 @@ class Chart(object):
                 self.instance.render(path=fout.name)
                 fout.seek(0)
                 content = fout.read()
-        if not PY2:
+        if PY2:
             content = content.decode('utf-8')
         return content
 
