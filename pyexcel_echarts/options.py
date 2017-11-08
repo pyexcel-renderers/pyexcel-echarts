@@ -14,6 +14,7 @@ CHART_TYPES = dict(
     box='Box',
     bar='Bar',
     hist='Bar',
+    cline='Line',
     bar3d='Bar3D',
     effectscatter='EffectScatter',
     scatter='Scatter',
@@ -132,6 +133,21 @@ class LineLayout(Chart):
             self.instance.add(
                 legend, sheet.colnames,
                 sheet.row[legend], **keywords)
+
+
+@PluginInfo('chart', tags=['cline'])
+class ContinuousLine(Chart):
+
+    def render_sheet(self, sheet,
+                     x=0, y=1,
+                     **keywords):
+        self.instance.add(
+            sheet.name, sheet.column[x],
+            sheet.column[y], **keywords)
+
+    def render_book(self, book, **keywords):
+        for sheet in book:
+            self.render_sheet(sheet, **keywords)
 
 
 @PluginInfo('chart', tags=['scatter3d'])
