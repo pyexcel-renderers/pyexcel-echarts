@@ -74,10 +74,15 @@ class SimpleLayout(Chart):
 class PieLayout(Chart):
 
     def render_sheet(self, sheet,
-                     label_y_in_row=0,
-                     value_x_in_row=1,
                      **keywords):
-        self.instance.add("", sheet.row[label_y_in_row],
+        attribute_names = None
+        value_x_in_row = 1
+        if sheet.colnames:
+            attribute_names = sheet.colnames
+            value_x_in_row = 0
+        else:
+            attribute_names = sheet.row[0]
+        self.instance.add("", attribute_names,
                           sheet.row[value_x_in_row], **keywords)
 
 
